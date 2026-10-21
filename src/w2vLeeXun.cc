@@ -64,8 +64,15 @@ void load(const FunctionCallbackInfo<Value>& info) {
     return;
   }
   char filename[max_size], fileType[max_size];
-  strcpy(filename, *Utf8String(info[0]));
-  strcpy(fileType, *Utf8String(info[1]));
+  Utf8String filename_arg(info[0]);
+  Utf8String fileType_arg(info[1]);
+  if (filename_arg.length() >= max_size || fileType_arg.length() >= max_size) {
+    printf("load: argument too long.\n");
+    info.GetReturnValue().Set(New<Boolean>(false));
+    return;
+  }
+  strcpy(filename, *filename_arg);
+  strcpy(fileType, *fileType_arg);
   printf("Reading: %s ....\n\n", filename);
   start = time(NULL);
   f = fopen(filename, "rb");
@@ -142,7 +149,13 @@ void bin2txt(const FunctionCallbackInfo<Value>& info) {
     exit(1);
   }
   char filename[max_size];
-  strcpy(filename, *Utf8String(info[0]));
+  Utf8String filename_arg(info[0]);
+  if (filename_arg.length() >= max_size) {
+    printf("bin2txt: filename too long.\n");
+    info.GetReturnValue().Set(New<Boolean>(false));
+    return;
+  }
+  strcpy(filename, *filename_arg);
   // printf("Reading: %s ....\n\n", filename);
   start = time(NULL);
   f = fopen(filename, "rb");
