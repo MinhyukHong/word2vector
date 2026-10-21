@@ -260,7 +260,9 @@ void getVectors(const FunctionCallbackInfo<Value>& info) {
 void getSimilarWords(const FunctionCallbackInfo<Value>& info)
 {
   // Override global N variable with second parameter
-  long N = (long)(atoi(*Utf8String(info[1]))); 
+  long N = (long)(atoi(*Utf8String(info[1])));
+  if (N < 0) N = 0;
+  if (N > ::N) N = ::N;
 
   if(info.Length() < 1) {
     printf("getSimilarWords requires 1st argument.\n");
